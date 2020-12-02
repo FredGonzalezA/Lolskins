@@ -1,25 +1,26 @@
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
+const electron = window.require('electron');
+const ipcRenderer  = electron.ipcRenderer;
+const { dialog } = require('electron')
+const fs = require("fs")
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+console.log(ipcRenderer)
+
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <main>
+            <h1 className="hdr">Seleccione la ruta para guardar los archivos</h1>
+            <button className="btn" onClick={() =>{
+                ipcRenderer.send('Abraham', 'Lerolero')
+            } }>Browse</button>
+        </main>
+      </div>
+    );
+  }
 }
 
 export default App;
