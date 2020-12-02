@@ -1,7 +1,8 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-const regex = /(?<link>https?:\/\/.+(?<version>ModSkin_.+)\.zip)(?:\W)/gm;
+const NamedRegExp = require('named-regexp-groups')
+const regex = new NamedRegExp('(?<link>https?:\/\/.+(?<version>ModSkin_.+)\.zip)([^a-zA-Z0-9_])');
 const path = require('path');
 const url = require('url');
 let mainWindow;
@@ -10,9 +11,21 @@ let options = {
     host: 'leagueskin.net',
     path: '/p/download-mod-skin-2020-chn'
 };
+let download = require('download-file')
+let drct = {
+    directory: "./Descargas",
+    filename: "Lolskins.zip"
+}
 
+const {ipcMain} = require('electron')
+const {dialog} = require('electron')
 
-callback = function(response) {
+ipcMain.on('Abraham', (p1, p2) => {
+    console.log('Recibiendo', p2)
+    dialog.showOpenDialog({properties: ['openFile', 'multiSelections']})
+})
+
+callback = function (response) {
     var str = '';
 
     //another chunk of data has been received, so append it to `str`
@@ -29,24 +42,31 @@ callback = function(response) {
 http.request(options, callback).end();
 
 
-function descargador(str){
+function descargador(str) {
     let lnk = '';
-    lnk = str;
-    console.log(lnk)
+    lnk = str.groups.link;
+    download(lnk, drct, function(err){
+        if (err) throw err
+        console.log("meow")
+    })
+
 
 }
 
 
-
-
-
 function createWindow() {
-    mainWindow = new BrowserWindow({width: 400, height: 600, webPreferences:{nodeIntegration: true, preload: './fred.js'}});
+    mainWindow = new BrowserWindow({
+        width: 400,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true
+        }
+    });
     const startUrl = process.env.ELECTRON_START_URL || url.format({
-            pathname: path.join(__dirname, '/../build/index.html'),
-            protocol: 'file:',
-            slashes: true
-        });
+        pathname: path.join(__dirname, '/../build/index.html'),
+        protocol: 'file:',
+        slashes: true
+    });
     mainWindow.loadURL(startUrl);
 
     mainWindow.webContents.openDevTools();
