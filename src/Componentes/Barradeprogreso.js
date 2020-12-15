@@ -12,12 +12,14 @@ ipcRenderer.on("carga", (evt, percentage) => {
 
 export const Bar = () => {
     const [percentage, setPercentage] = React.useState(0);
-
+    let error = false
     React.useEffect(() => {
         _evtPercentage = setPercentage;
     }, []);
 
-
+    // ipcRenderer.on('errorDeDescarga', (valor)=>{
+    //     error = valor
+    // })
 
     if(percentage === 0) {
         return null;
@@ -25,7 +27,7 @@ export const Bar = () => {
 
     return <div style={{
         position: "absolute",
-        bottom: 25,
+        bottom: 90,
         left: 98,
         width: 200,
         height: 18,

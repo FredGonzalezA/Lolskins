@@ -18,10 +18,10 @@ class Bototonesdeopciones extends Component {
                     ipcRenderer.send('minimizado', 'minimizado')
                 }}>➖
                 </button>
-                <button className="option" onClick={() => {
-                    ipcRenderer.send('minimizado', 'minimizado')
-                }}>⚙️
-                </button>
+                {/*<button className="option" onClick={() => {*/}
+                {/*    ipcRenderer.send('minimizado', 'minimizado')*/}
+                {/*}}>⚙️*/}
+                {/*</button>*/}
             </header>
 
 

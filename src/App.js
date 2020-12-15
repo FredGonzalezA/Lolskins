@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, {Component} from 'react';
 import './Componentes/App.css';
-import Bototonesdeopciones from "./Componentes/Bototonesdeopciones";
+import BotonesDeOpciones from "./Componentes/Bototonesdeopciones";
 import {Bar} from "./Componentes/Barradeprogreso"
 
 const electron = window.require('electron');
@@ -29,17 +29,28 @@ export class App extends Component {
         this.setState({
             isButtonDisabled: true
         })
-        setTimeout(() => this.setState({isButtonDisabled: false}), 2);
+        // setTimeout(() => this.setState({isButtonDisabled: false}), 2);
         ipcRenderer.send('Abraham', 'Lerolero')
-        ipcRenderer.on('errorDeDescarga', (valor)=>{
+        ipcRenderer.on('errorDeDescarga', (valor) => {
             this.setState({mostrarBoton: valor})
         })
-
         this.setState({
             mensajeDelBoton: 'Reintentar',
             mensajeDeAviso: 'Descarga en proceso',
             mostrarBoton: false
         })
+    }
+
+    componentDidMount() {
+        ipcRenderer.on('Actualizacion', () => {
+            this.setState({
+                isButtonDisabled: true,
+                showMessage: true,
+                mensajeDeAviso: 'Actualizacion en progreso',
+                mostrarBoton: false
+            })
+        })
+        ipcRenderer.send('AppLista', 'Ready')
     }
 
 
@@ -48,11 +59,11 @@ export class App extends Component {
         return (
             <div className="App">
                 <main>
-                    <Bototonesdeopciones/>
+                    <BotonesDeOpciones/>
                     {this.state.mostrarBoton && <button className="btn"
                                                         disabled={this.state.isButtonDisabled}
                                                         onClick={this.onLaunchClicked}> {this.state.mensajeDelBoton}
-                                                </button>
+                    </button>
                     }
                     {this.state.showMessage && <p className="hdr">{this.state.mensajeDeAviso}</p>}
                     <Bar/>

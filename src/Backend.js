@@ -9,6 +9,7 @@ const https = require('https')
 const {ipcMain} = require('electron')
 const extract = require('extract-zip')
 const yauzl = require("yauzl")
+
 const direccionDeInstalacionDeDatos = process.env.APPDATA + '\\Fred\\Lolskins\\Data'
 mkdirp(direccionDeInstalacionDeDatos)
 const direccionDeInstalacionDePrograma = process.env.APPDATA + '\\Fred\\Lolskins\\Programa'
@@ -114,13 +115,20 @@ app.on('ready', () => {
                                     console.log(data.toString());
                                     app.quit()
                                 });
-                            } else {
+                            } else if (archivo !== comparador) {
                                 createWindow()
-                                mainWindow.webContents.send('Actualizacion', 'Actualizando')
+                                ipcMain.on('AppLista', ()=>{
+                                    const windows = BrowserWindow.getAllWindows()
+                                    if (windows.length > 0) {
+                                        windows[0].webContents.send('Actualizacion', 'Procesos')
+                                    }
+                                })
+                                eliminadorDeCarpetas(direccionDeInstalacionDeDatos, false)
+                                eliminadorDeCarpetas(direccionDeInstalacionDePrograma, false)
+                                metodoPrincipaldeDescarga(regex.exec(str));
                             }
                         } else {
                             createWindow()
-                            mainWindow.webContents.send('Actualizacion', 'Actualizando')
                         }
                     })
 
@@ -143,38 +151,16 @@ ipcMain.on('Abraham', async (p1, p2) => {
     console.log('Recibiendo', p2)
     // dircc = await (dialog.showOpenDialog({properties: ['openDirectory']}))
     bajadadelHTML(options).then((str) => {
-    const rx = regex.exec(str);
-    const comparador = rx.groups.version;
+    metodoPrincipaldeDescarga(regex.exec(str))
 
-    fs.exists(path.normalize(direccionDeInstalacionDeDatos) + '\\version.txt', function (exists) {
-        if (exists) {
-            let archivo = fs.readFileSync(path.normalize(direccionDeInstalacionDeDatos) + '\\version.txt', 'utf-8')
-            if (archivo === comparador) {
-                let ejecutador = fs.readFileSync(path.normalize(direccionDeInstalacionDeDatos) + '\\direcciondelexe.txt', 'utf-8')
-                exec(ejecutador, function (err, data) {
-                    console.log(err)
-                    console.log(data.toString());
-                });
-                mainWindow.close()
-            } else if (archivo !== comparador) {
-                eliminadorDeCarpetas(direccionDeInstalacionDeDatos, false)
-                eliminadorDeCarpetas(direccionDeInstalacionDePrograma, false)
-                metodoPrincipaldeDescarga(regex.exec(str));
-            }
-        } else {
-            metodoPrincipaldeDescarga(regex.exec(str))
-        }
-    })
 })})
 
 
 function progresoDeLaDescarga(received, total) {
 
-
+    const windows = BrowserWindow.getAllWindows()
     const percentage = (received * 100) / total;
     console.log(percentage + "% | " + received + " bytes de " + total + " bytes.");
-    const windows = BrowserWindow.getAllWindows()
-
     if (windows.length > 0) {
         windows[0].webContents.send('carga', percentage.toFixed())
     }
