@@ -88,7 +88,7 @@
   "homepage": "./",
   "main": "src/Backend.js",
   "scripts": {
-    "start": "nf start -p 3001",
+    "start": "electron .",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "electron": "electron .",
