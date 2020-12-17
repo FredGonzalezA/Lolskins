@@ -79,7 +79,7 @@ function createWindow() {
     });
     mainWindow.loadURL(startUrl);
 
-    mainWindow.webContents.openDevTools();
+
     mainWindow.setResizable(false);
 
     mainWindow.on('closed', function () {
